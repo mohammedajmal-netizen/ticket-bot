@@ -51,7 +51,8 @@ DATE_RE = re.compile(r"/(20\d{6})(?=/?$|[?#])")
 
 log = logging.getLogger("ticketbot")
 PAGES_OK = 0  # pages loaded successfully during the current check
-TG_STATUS = "not tried"  # plain-language Telegram result (never contains the token)
+TG_STATUS = "not tried"
+PAGE_LOG = []  # what happened to each page in the current check (for state.json)  # plain-language Telegram result (never contains the token)
 
 DEFAULTS = {
     "movie_name": "Avengers: Doomsday",
@@ -303,16 +304,24 @@ def main_section(text):
 def open_page(page, url, cfg):
     """Load a URL; return (status, text). status: ok | blocked | error"""
     global PAGES_OK
+    short = url.replace(cfg["bms_base"], "")[:90]
+    resp = None
     try:
         resp = page.goto(url, wait_until="domcontentloaded", timeout=45000)
         page.wait_for_timeout(cfg["page_wait_seconds"] * 1000)
         text = page.inner_text("body")
     except PWTimeout:
         log.warning("Timed out: %s", url)
+        PAGE_LOG.append(f"{short} -> timeout")
         return "error", ""
     except Exception as e:
-        log.warning("Failed to load %s: %s", url, str(e).splitlines()[0])
+        msg = str(e).splitlines()[0][:120]
+        log.warning("Failed to load %s: %s", url, msg)
+        PAGE_LOG.append(f"{short} -> error: {msg}")
         return "error", ""
+    code = resp.status if resp is not None else "?"
+    snippet = " ".join(text.split())[:80]
+    PAGE_LOG.append(f"{short} -> HTTP {code}, {len(text)} chars: {snippet}")
     low = text.lower()
     if len(low) < 1500 and any(m in low for m in BLOCK_MARKERS):
         return "blocked", text
@@ -488,6 +497,7 @@ def should_alert(st, key, cfg):
 def check_once(cfg, st):
     global PAGES_OK
     PAGES_OK = 0
+    PAGE_LOG.clear()
     kw = cfg["movie_keyword"].lower()
     palaxi_live, palaxi_state, thrissur_state = [], "unknown", "unknown"
 
@@ -595,6 +605,7 @@ def check_once(cfg, st):
                           + (f" ({', '.join(pretty_date(d) for d in palaxi_live)})"
                              if palaxi_live else "")
                           + f"\nThrissur booking: {thrissur_state}")
+    st["last_pages"] = PAGE_LOG[:15]
     save_state(st)
 
 
