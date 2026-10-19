@@ -1,0 +1,12 @@
+{
+  "alerted_dates": {},
+  "thrissur_open_alerted": false,
+  "failures": 0,
+  "failure_alert_sent": false,
+  "venue_url": "",
+  "movie_url": "",
+  "last_daily": "",
+  "last_summary": "No check yet",
+  "started_sent": false,
+  "telegram_chat_id": ""
+}
