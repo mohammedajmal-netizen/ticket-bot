@@ -51,6 +51,7 @@ DATE_RE = re.compile(r"/(20\d{6})(?=/?$|[?#])")
 
 log = logging.getLogger("ticketbot")
 PAGES_OK = 0  # pages loaded successfully during the current check
+TG_STATUS = "not tried"  # plain-language Telegram result (never contains the token)
 
 DEFAULTS = {
     "movie_name": "Avengers: Doomsday",
@@ -141,6 +142,7 @@ def _real(v):
 
 def telegram_chat_id(cfg, st):
     """Use the configured chat id, or find it from the bot's recent messages."""
+    global TG_STATUS
     tg = cfg["telegram"]
     if _real(tg.get("chat_id")):
         return str(tg["chat_id"])
@@ -150,6 +152,16 @@ def telegram_chat_id(cfg, st):
         r = requests.get(
             f"https://api.telegram.org/bot{tg['bot_token']}/getUpdates",
             timeout=30)
+        if r.status_code in (401, 404):
+            TG_STATUS = ("Telegram rejected the bot token (revoked or mistyped) - "
+                         "update the TELEGRAM_BOT_TOKEN secret")
+            log.warning(TG_STATUS)
+            return ""
+        if r.status_code == 409:
+            TG_STATUS = ("bot has a webhook set, so its messages can't be read - "
+                         "add your chat id as the TELEGRAM_CHAT_ID secret")
+            log.warning(TG_STATUS)
+            return ""
         for upd in reversed(r.json().get("result", [])):
             msg = upd.get("message") or upd.get("my_chat_member") or {}
             chat = msg.get("chat", {})
@@ -162,14 +174,19 @@ def telegram_chat_id(cfg, st):
                 return cid
     except (requests.RequestException, ValueError) as e:
         log.warning("Couldn't look up Telegram chat: %s", e)
-    log.warning("No Telegram chat found — open your bot in Telegram, press "
-                "Start (or send it any message), then try again.")
+    TG_STATUS = ("token works, but no chat found - open your bot in Telegram, "
+                 "press Start (or send it 'hi'), then run the test again")
+    log.warning(TG_STATUS)
     return ""
 
 
 def send_telegram(cfg, text, st=None, photo=None):
+    global TG_STATUS
     tg = cfg["telegram"]
     if not _real(tg.get("bot_token")):
+        TG_STATUS = ("no bot token found - add the TELEGRAM_BOT_TOKEN secret "
+                     "(exact name) in the repo's Actions secrets")
+        log.warning(TG_STATUS)
         return False
     chat_id = telegram_chat_id(cfg, st)
     if not chat_id:
@@ -183,6 +200,7 @@ def send_telegram(cfg, text, st=None, photo=None):
                                         "caption": text[:1024]},
                                   files={"photo": f}, timeout=60)
             if r.ok:
+                TG_STATUS = "ok"
                 log.info("Telegram sent (with screenshot).")
                 return True
         r = requests.post(f"{api}/sendMessage",
@@ -190,11 +208,18 @@ def send_telegram(cfg, text, st=None, photo=None):
                                 "disable_web_page_preview": "true"},
                           timeout=30)
     except requests.RequestException as e:
+        TG_STATUS = f"couldn't reach Telegram ({type(e).__name__})"
         log.warning("Telegram send failed: %s", e)
         return False
     if not r.ok:
-        log.warning("Telegram error %s: %s", r.status_code, r.text[:200])
+        try:
+            desc = r.json().get("description", "")
+        except ValueError:
+            desc = ""
+        TG_STATUS = f"Telegram refused the message ({r.status_code}: {desc[:120]})"
+        log.warning(TG_STATUS)
         return False
+    TG_STATUS = "ok"
     log.info("Telegram sent.")
     return True
 
@@ -236,6 +261,8 @@ def notify(cfg, text, st=None, photo=None):
     log.info("ALERT: %s", text.replace("\n", " | "))
     sent = send_telegram(cfg, text, st, photo)
     sent = send_whatsapp(cfg, text) or sent
+    if st is not None:
+        st["telegram_status"] = TG_STATUS + f" ({datetime.now():%d %b %I:%M %p})"
     if not sent:
         log.warning("No alert channel worked — check the Telegram settings.")
     if cfg.get("desktop_notifications", True):
