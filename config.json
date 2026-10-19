@@ -1,0 +1,22 @@
+{
+  "telegram": {
+    "bot_token": "PASTE_YOUR_BOT_TOKEN (or use the TELEGRAM_BOT_TOKEN secret on GitHub)",
+    "chat_id": ""
+  },
+
+  "movie_name": "Avengers: Doomsday",
+  "movie_keyword": "doomsday",
+  "theatre_keyword": "palaxi",
+  "city": "thrissur",
+  "palaxi_venue_url": "https://in.bookmyshow.com/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/PCAT",
+
+  "first_date": "20261217",
+  "days_to_check": 5,
+  "extra_dates": [],
+
+  "interval_minutes": 10,
+  "repeat_alert_minutes": 0,
+  "daily_status_time": "09:00",
+  "headless": true,
+  "desktop_notifications": true
+}

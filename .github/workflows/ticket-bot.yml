@@ -1,0 +1,72 @@
+name: Avengers Doomsday ticket bot
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"        # every 10 minutes (GitHub may run it a few minutes late)
+  workflow_dispatch:              # lets you run it by hand from the Actions tab
+    inputs:
+      test_message:
+        description: "Only send a test Telegram message"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write                 # needed to save state.json between runs
+
+concurrency:
+  group: ticket-bot
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      TZ: Asia/Kolkata
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      WHATSAPP_PHONE: ${{ secrets.WHATSAPP_PHONE }}
+      CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+      WHATSAPP_PROVIDER: ${{ secrets.WHATSAPP_PROVIDER }}
+      TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+      TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+      TWILIO_FROM: ${{ secrets.TWILIO_FROM }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Cache browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Send test message
+        if: ${{ inputs.test_message }}
+        run: python bot.py --test-telegram
+
+      - name: Check for tickets
+        if: ${{ !inputs.test_message }}
+        run: python bot.py --once
+
+      - name: Save bot memory (state.json)
+        if: ${{ always() }}
+        run: |
+          git config user.name "ticket-bot"
+          git config user.email "ticket-bot@users.noreply.github.com"
+          git add state.json 2>/dev/null || exit 0
+          if ! git diff --cached --quiet; then
+            git commit -m "Update bot state"
+            git pull --rebase --autostash
+            git push
+          fi
