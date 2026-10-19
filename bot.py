@@ -174,8 +174,15 @@ def telegram_chat_id(cfg, st):
                 return cid
     except (requests.RequestException, ValueError) as e:
         log.warning("Couldn't look up Telegram chat: %s", e)
-    TG_STATUS = ("token works, but no chat found - open your bot in Telegram, "
-                 "press Start (or send it 'hi'), then run the test again")
+    name = ""
+    try:
+        me = requests.get(f"https://api.telegram.org/bot{tg['bot_token']}/getMe",
+                          timeout=30).json().get("result", {})
+        name = "@" + me["username"] if me.get("username") else ""
+    except Exception:
+        pass
+    TG_STATUS = (f"token works, but no chat found - open your bot {name} in "
+                 "Telegram, press Start (or send it 'hi'), then run the test again")
     log.warning(TG_STATUS)
     return ""
 
