@@ -8,5 +8,6 @@
   "last_daily": "",
   "last_summary": "No check yet",
   "started_sent": false,
-  "telegram_chat_id": ""
+  "telegram_chat_id": "",
+  "telegram_status": "token works, but no chat found - open your bot in Telegram, press Start (or send it 'hi'), then run the test again (19 Oct 11:46 PM)"
 }
