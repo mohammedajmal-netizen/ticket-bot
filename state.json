@@ -1,7 +1,7 @@
 {
   "alerted_dates": {},
   "thrissur_open_alerted": false,
-  "failures": 8,
+  "failures": 9,
   "failure_alert_sent": true,
   "venue_url": "https://in.bookmyshow.com/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261026",
   "movie_url": "",
@@ -13,6 +13,8 @@
   "last_pages": [
     "/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261026 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/explore/movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
-    "/explore/upcoming-movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I "
+    "/explore/upcoming-movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/movies/thrissur/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/thrissur/movies/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I "
   ]
 }
