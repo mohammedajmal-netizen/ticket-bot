@@ -1,15 +1,15 @@
 {
   "alerted_dates": {},
   "thrissur_open_alerted": false,
-  "failures": 20,
+  "failures": 21,
   "failure_alert_sent": true,
   "venue_url": "https://in.bookmyshow.com/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261026",
   "movie_url": "",
-  "last_daily": "2026-10-29",
+  "last_daily": "2026-10-30",
   "last_summary": "Palaxi HiLITE Thrissur: page not reachable\nThrissur booking: movie not listed yet",
   "started_sent": true,
   "telegram_chat_id": "6780569519",
-  "telegram_status": "ok (29 Oct 11:27 AM)",
+  "telegram_status": "ok (30 Oct 02:24 PM)",
   "last_pages": [
     "/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261026 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/explore/movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
