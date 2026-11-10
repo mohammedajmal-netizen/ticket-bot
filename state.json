@@ -1,19 +1,23 @@
 {
   "alerted_dates": {},
   "thrissur_open_alerted": false,
-  "failures": 10,
+  "failures": 11,
   "failure_alert_sent": true,
   "venue_url": "https://in.bookmyshow.com/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261107",
   "movie_url": "",
-  "last_daily": "2026-11-09",
+  "last_daily": "2026-11-10",
   "last_summary": "Palaxi HiLITE Thrissur: page not reachable\nThrissur booking: movie not listed yet",
   "started_sent": true,
   "telegram_chat_id": "6780569519",
-  "telegram_status": "ok (09 Nov 11:29 AM)",
+  "telegram_status": "ok (10 Nov 12:07 PM)",
   "last_pages": [
     "/cinemas/thrissur/palaxi-cinemas-hilite-mall-thrissur/buytickets/PCAT/20261107 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/explore/movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/explore/upcoming-movies-thrissur -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/movies/thrissur/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/thrissur/movies/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/movies/thrissur/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
+    "/thrissur/movies/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/movies/thrissur/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I ",
     "/thrissur/movies/avengers-doomsday/ET00439706 -> HTTP 403, 691 chars: Sorry, you have been blocked You are unable to access bookmyshow.com Why have I "
   ]
